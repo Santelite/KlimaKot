@@ -22,6 +22,7 @@ fun main() {
     toca hacer es extraer cada objeto, de ahi el getJSONObject de objeto, que ya era el objeto json base que daba la api.
     Esto es 0 eficiente, pero funciona hasta que quieres usar el objeto de forecast porque son como 5 objetos anidados en uno,
     pero mientras no queramos usar las predicciones no importa, es problema para Luis del futuro.*/
+
     val locacion : JSONObject = objeto.getJSONObject("location")
     val actual : JSONObject = objeto.getJSONObject("current")
     val futuro : JSONObject = objeto.getJSONObject("forecast")
@@ -34,10 +35,4 @@ fun main() {
     println("Información de debug")
     println(actual)
     println(futuro)
-
-
-    //val ciudad = mensaje
-    //println(objeto["location"])
-    //println(objeto["current"])
-    //for (i in objeto.toString())
 }
