@@ -30,7 +30,7 @@ fun main() {
     println("La temperatura actual es de: "+actual["temp_c"]+"°C")
     println("La sensación termica es de: "+actual["feelslike_c"]+"°C")
     println("La información fue actualizada el: "+actual["last_updated"])
-    println("/n")
+    println(" ")
     println("Información de debug")
     println(actual)
     println(futuro)
