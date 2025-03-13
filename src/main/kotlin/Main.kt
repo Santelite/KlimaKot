@@ -9,7 +9,7 @@ fun main() {
     val postal = readln()//le pide al usuario una ciudad o codigo postal, probablemente debería crear un manejador de errores.
     val mensaje : Response = khttp.get(
         url = "http://api.weatherapi.com/v1/forecast.json",
-        params = mapOf("key" to "9bcc50a7119f44be93c130505251103", "q" to postal)
+        params = mapOf("key" to "9bcc50a7119f44be93c130505251103", "q" to postal)//que buena idea dejar la llave sin obfuscar.
     )//Pedirle el JSON a la API, el cual contiene todos los datos que queremos.
     println(mensaje)//puro debug
 
