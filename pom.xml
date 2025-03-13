@@ -74,7 +74,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>${mainClass}</mainClass>
+                                    <mainClass>{main.Class}</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
