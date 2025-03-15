@@ -78,7 +78,15 @@ fun main() {
     Esto es 0 eficiente, pero funciona hasta que quieres usar el objeto de forecast porque son como 5 objetos anidados en uno,
     pero mientras no queramos usar las predicciones no importa, es problema para Luis del futuro.*/
 
-    print("")
+    print("\n" +
+            "\n" +
+            " ___  __    ___       ___  _____ ______   ________  ___  __    ________  _________   \n" +
+            "|\\  \\|\\  \\ |\\  \\     |\\  \\|\\   _ \\  _   \\|\\   __  \\|\\  \\|\\  \\ |\\   __  \\|\\___   ___\\ \n" +
+            "\\ \\  \\/  /|\\ \\  \\    \\ \\  \\ \\  \\\\\\__\\ \\  \\ \\  \\|\\  \\ \\  \\/  /|\\ \\  \\|\\  \\|___ \\  \\_| \n" +
+            " \\ \\   ___  \\ \\  \\    \\ \\  \\ \\  \\\\|__| \\  \\ \\   __  \\ \\   ___  \\ \\  \\\\\\  \\   \\ \\  \\  \n" +
+            "  \\ \\  \\\\ \\  \\ \\  \\____\\ \\  \\ \\  \\    \\ \\  \\ \\  \\ \\  \\ \\  \\\\ \\  \\ \\  \\\\\\  \\   \\ \\  \\ \n" +
+            "   \\ \\__\\\\ \\__\\ \\_______\\ \\__\\ \\__\\    \\ \\__\\ \\__\\ \\__\\ \\__\\\\ \\__\\ \\_______\\   \\ \\__\\\n" +
+            "    \\|__| \\|__|\\|_______|\\|__|\\|__|     \\|__|\\|__|\\|__|\\|__| \\|__|\\|_______|    \\|__|\n"+"\n")
 
     val locacion : JSONObject = objeto.getJSONObject("location")
     val actual : JSONObject = objeto.getJSONObject("current")
