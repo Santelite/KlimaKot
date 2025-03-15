@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="climakot:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/climakot_jar</output-path>
+    <root id="archive" name="climakot.jar">
+      <element id="module-output" name="climakot" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/danilopianini/khttp/1.6.3/khttp-1.6.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20240303/json-20240303.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/2.1.10/kotlin-stdlib-2.1.10.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
