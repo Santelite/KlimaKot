@@ -1,6 +1,5 @@
 package org.example
 
-//import com.sun.org.apache.bcel.internal.generic.IFEQ
 import khttp.get
 import khttp.responses.Response
 import org.json.JSONObject
@@ -31,6 +30,7 @@ fun main() {
         }
 
     while(true) {
+
         var postal = inicial.readLines().toString()
 
         while (true) {
@@ -129,7 +129,8 @@ fun main() {
         println("Opciones:")
         println("1. Ver predicción del clima")
         println("2. Cambiar Ciudad")
-        println("3. Salir")
+        println("3. Ver alertas del clima")
+        println("4. Salir")
         when(readln().toIntOrNull()) {
             1 -> {
                     //ya sirve ya lo arregle :)
@@ -143,6 +144,39 @@ fun main() {
                 File(confi).writeText(readln())
             }
             3 -> {
+                println("Buscando alertas")
+                val alerta = get(
+                    url = "http://api.weatherapi.com/v1/alerts.json",
+                    params = mapOf(
+                        "key" to "9bcc50a7119f44be93c130505251103",
+                        "q" to postal,
+                        "lang" to "es"
+                    )
+                )
+                //debug println(alerta.jsonObject)
+                val objetoalerta = alerta.jsonObject
+                val a = objetoalerta.getJSONObject("alerts")
+                val alertaarray = a.getJSONArray("alert")
+                if (!alertaarray.isEmpty) {
+                    val indicealerta = alertaarray.getJSONObject(1)
+                    println("Alerta más reciente")
+                    println("Las alertas se muestran en el Idioma Local.")
+                    println("Tipo" + indicealerta["msgtype"])
+                    println("Severidad" + indicealerta["severity"])
+                    println(indicealerta["headline"])
+                    println(indicealerta["desc"])
+                    println("Areas afectadas:" + indicealerta["areas"])
+                    println(indicealerta["effective"])
+                    println(indicealerta["expires"])
+                    println()
+                    println("Enter para continuar")
+                    readln()
+                } else {
+                    println("No hay alertas que mostrar... (Enter para continuar)")
+                    readln()
+                }
+            }
+            4 -> {
                 println("Saliendo")
                 break
             }
