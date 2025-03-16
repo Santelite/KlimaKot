@@ -105,7 +105,8 @@ fun main() {
             println("La temperatura actual es de: " + actual["temp_c"] + "°C")
             println("La sensación termica es de: " + actual["feelslike_c"] + "°C")
             println("La información fue actualizada el: " + actual["last_updated"])
-        } else {
+
+        } else if(dias.toIntOrNull() != null && hora.toIntOrNull() != null && dias.toInt() <= 14 && hora.toInt() <= 24) { //si el usuario quiere romper el codigo no lo voy a dejar.
             //ya es Luis del futuro pero al menos encontre de hacerlo de una forma menos horrible, es lo mismo pero con variables
             val x = futuro.getJSONArray("forecastday")
             val fechafutura = x.getJSONObject(dias.toInt() - 1)
@@ -118,6 +119,8 @@ fun main() {
             println("La temperatura Max será de " + climafuturo["maxtemp_c"] + "°C, y la Min de " + climafuturo["mintemp_c"] + "°C")
             println("La probabilidad de lluvia es de " + climafuturo["daily_chance_of_rain"] + "%")
             println("La temperatura a esa hora será de " + porHora["temp_c"] + "°C")
+        } else {
+            println("Hora o día inválido! Vuelve a intentarlo...") //buen intento bro JKAJKJA
         }
         //println("Información de debug")
         //println(actual)
@@ -129,11 +132,11 @@ fun main() {
         println("3. Salir")
         when(readln().toIntOrNull()) {
             1 -> {
-                //esto aun no sirve por como funciona la api, a lo mejor lo puedo arreglar despues
-                println("Cuantos días en el futuro?")
-                dias = readln().toString()
-                println("En que horas? (24h)")
-                hora = readln().toString()
+                    //ya sirve ya lo arregle :)
+                    println("Cuantos días en el futuro? (Max. 14 Días)")
+                    dias = readln().toString()
+                    println("En que horas? (24h)")
+                    hora = readln().toString()
             }
             2 -> {
                 println("Ingrese Ciudad o Código Postal de US")
