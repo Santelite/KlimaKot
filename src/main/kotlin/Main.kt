@@ -28,7 +28,7 @@ fun main() {
         println("Ingrese Ciudad o Código postal de US")
         File(confi).writeText(readln())
         println("Guardando...")
-    }
+        }
 
     while(true) {
         var postal = inicial.readLines().toString()
