@@ -1,5 +1,6 @@
 package org.example
 
+//import com.sun.org.apache.bcel.internal.generic.IFEQ
 import khttp.get
 import khttp.responses.Response
 import org.json.JSONObject
@@ -10,7 +11,8 @@ fun main() {
     val inicial = File(confi)
     var mensaje : Response
     var objeto : JSONObject
-    var dias : String = 1.toString()
+    var dias : String = 0.toString()
+    var hora : String = 0.toString()
     if(inicial.length() == 0L) {
         print("\n" +
                 "\n" +
@@ -96,13 +98,27 @@ fun main() {
 
         val locacion: JSONObject = objeto.getJSONObject("location")
         val actual: JSONObject = objeto.getJSONObject("current")
-        //val futuro : JSONObject = objeto.getJSONObject("forecast")
-        println(locacion["country"])
-        println(locacion["name"])
-        println("La temperatura actual es de: " + actual["temp_c"] + "°C")
-        println("La sensación termica es de: " + actual["feelslike_c"] + "°C")
-        println("La información fue actualizada el: " + actual["last_updated"])
-        println("La información fue actualizada el: " + actual["last_updated"])
+        val futuro : JSONObject = objeto.getJSONObject("forecast")
+        if(dias == 0.toString()) {
+            println(locacion["country"])
+            println(locacion["name"])
+            println("La temperatura actual es de: " + actual["temp_c"] + "°C")
+            println("La sensación termica es de: " + actual["feelslike_c"] + "°C")
+            println("La información fue actualizada el: " + actual["last_updated"])
+        } else {
+            //ya es Luis del futuro pero al menos encontre de hacerlo de una forma menos horrible, es lo mismo pero con variables
+            val x = futuro.getJSONArray("forecastday")
+            val fechafutura = x.getJSONObject(dias.toInt() - 1)
+            val climafuturo = fechafutura.getJSONObject("day")
+            val todaHora = fechafutura.getJSONArray("hour")
+            val porHora = todaHora.getJSONObject(hora.toInt())
+
+            //presentar la info
+            println("La fecha y hora será: " + porHora["time"])
+            println("La temperatura Max será de " + climafuturo["maxtemp_c"] + "°C, y la Min de " + climafuturo["mintemp_c"] + "°C")
+            println("La probabilidad de lluvia es de " + climafuturo["daily_chance_of_rain"] + "%")
+            println("La temperatura a esa hora será de " + porHora["temp_c"] + "°C")
+        }
         //println("Información de debug")
         //println(actual)
         //println(futuro)
@@ -116,6 +132,8 @@ fun main() {
                 //esto aun no sirve por como funciona la api, a lo mejor lo puedo arreglar despues
                 println("Cuantos días en el futuro?")
                 dias = readln().toString()
+                println("En que horas? (24h)")
+                hora = readln().toString()
             }
             2 -> {
                 println("Ingrese Ciudad o Código Postal de US")
@@ -125,6 +143,7 @@ fun main() {
                 println("Saliendo")
                 break
             }
+            else -> println("Comando Inválido")
         }
     }
 }
