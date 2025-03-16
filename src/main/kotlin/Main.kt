@@ -6,8 +6,11 @@ import org.json.JSONObject
 import java.io.File
 
 fun main() {
-    val inicial = File("config.txt")
+    val confi = "config.txt"
+    val inicial = File(confi)
     var mensaje : Response
+    var objeto : JSONObject
+    var dias : String = 1.toString()
     if(inicial.length() == 0L) {
         print("\n" +
                 "\n" +
@@ -20,83 +23,108 @@ fun main() {
                 "                           __/ |                                 \n" +
                 "                          |___/                                  \n" +
                 "\n")
-        println("Ingrese Ciudad o codigo postal de US")
-        val configurar = readln()
-        File("config.txt").appendText(configurar)
+        println("Ingrese Ciudad o Código postal de US")
+        File(confi).writeText(readln())
         println("Guardando...")
     }
 
-    var postal = inicial.readLines().toString()
-    var objeto : JSONObject
     while(true) {
-        //Hacer pedido a la api
-        println(postal)
-        mensaje = get(
-            url = "http://api.weatherapi.com/v1/forecast.json",
-            params = mapOf(
-                "key" to "9bcc50a7119f44be93c130505251103",
-                "q" to postal
+        var postal = inicial.readLines().toString()
+
+        while (true) {
+            //Hacer pedido a la api
+            //debug println(postal)
+            mensaje = get(
+                url = "http://api.weatherapi.com/v1/forecast.json",
+                params = mapOf(
+                    "key" to "9bcc50a7119f44be93c130505251103",
+                    "q" to postal,
+                    "lang" to "es",
+                    "days" to dias.toString()
+                )
             )
-        )
-        println(mensaje)
+            //debug(debería regresar la como respuesta el codigo 200) println(mensaje)
 
+            objeto = mensaje.jsonObject
+            //debug(debería mostrar el json que da la api) println(objeto)
 
-        objeto = mensaje.jsonObject
-        println(objeto)
+            //File("in.json").writeText(mensaje.jsonObject.toString())
 
-        //File("in.json").writeText(mensaje.jsonObject.toString())
-        if(mensaje.statusCode == 200){
-            break
+            //si la api regreso algo válido entonces romper el bucle
+            if (mensaje.statusCode == 200) {
+                break
+            }
+
+            //si no regreso algo válido entonces mostrar error y seguir bucle hasta que se resuelva
+            print(
+                "\n" +
+                        "\n" +
+                        "  ______                     _ \n" +
+                        " |  ____|                   | |\n" +
+                        " | |__   _ __ _ __ ___  _ __| |\n" +
+                        " |  __| | '__| '__/ _ \\| '__| |\n" +
+                        " | |____| |  | | | (_) | |  |_|\n" +
+                        " |______|_|  |_|  \\___/|_|  (_)\n" +
+                        "                               \n" +
+                        "                               \n" +
+                        "\n"
+            )
+            println("Ciudad Inválida! Intentalo de nuevo.")
+            //inicial.delete()
+            File(confi).writeText(readln())
+            postal = inicial.readLines().toString()
+            //debug println(postal)
         }
 
+        //el titulo asi bien chivo
         print(
             "\n" +
                     "\n" +
-                    "  ______                     _ \n" +
-                    " |  ____|                   | |\n" +
-                    " | |__   _ __ _ __ ___  _ __| |\n" +
-                    " |  __| | '__| '__/ _ \\| '__| |\n" +
-                    " | |____| |  | | | (_) | |  |_|\n" +
-                    " |______|_|  |_|  \\___/|_|  (_)\n" +
-                    "                               \n" +
-                    "                               \n" +
-                    "\n"
+                    " ___  __    ___       ___  _____ ______   ________  ___  __    ________  _________   \n" +
+                    "|\\  \\|\\  \\ |\\  \\     |\\  \\|\\   _ \\  _   \\|\\   __  \\|\\  \\|\\  \\ |\\   __  \\|\\___   ___\\ \n" +
+                    "\\ \\  \\/  /|\\ \\  \\    \\ \\  \\ \\  \\\\\\__\\ \\  \\ \\  \\|\\  \\ \\  \\/  /|\\ \\  \\|\\  \\|___ \\  \\_| \n" +
+                    " \\ \\   ___  \\ \\  \\    \\ \\  \\ \\  \\\\|__| \\  \\ \\   __  \\ \\   ___  \\ \\  \\\\\\  \\   \\ \\  \\  \n" +
+                    "  \\ \\  \\\\ \\  \\ \\  \\____\\ \\  \\ \\  \\    \\ \\  \\ \\  \\ \\  \\ \\  \\\\ \\  \\ \\  \\\\\\  \\   \\ \\  \\ \n" +
+                    "   \\ \\__\\\\ \\__\\ \\_______\\ \\__\\ \\__\\    \\ \\__\\ \\__\\ \\__\\ \\__\\\\ \\__\\ \\_______\\   \\ \\__\\\n" +
+                    "    \\|__| \\|__|\\|_______|\\|__|\\|__|     \\|__|\\|__|\\|__|\\|__| \\|__|\\|_______|    \\|__|\n" + "\n"
         )
-        println("Ciudad Inválida! Intentalo de nuevo.")
-        inicial.delete()
-        val configurar = readln()
-        File("config.txt").appendText(configurar)
-        postal = inicial.readLines().toString()
-        println(postal)
+
+        /*Basicamente como la API da objetos de JSON Anidados (uno dentro de otro), lo que
+        toca hacer es extraer cada objeto, de ahi el getJSONObject de objeto, que ya era el objeto json base que daba la api.
+        Esto funciona hasta que queres usar el objeto de forecast porque son como 5 objetos anidados en uno,
+        pero mientras no queramos usar las predicciones no importa, es problema para Luis del futuro.*/
+
+        val locacion: JSONObject = objeto.getJSONObject("location")
+        val actual: JSONObject = objeto.getJSONObject("current")
+        //val futuro : JSONObject = objeto.getJSONObject("forecast")
+        println(locacion["country"])
+        println(locacion["name"])
+        println("La temperatura actual es de: " + actual["temp_c"] + "°C")
+        println("La sensación termica es de: " + actual["feelslike_c"] + "°C")
+        println("La información fue actualizada el: " + actual["last_updated"])
+        println("La información fue actualizada el: " + actual["last_updated"])
+        //println("Información de debug")
+        //println(actual)
+        //println(futuro)
+        print("\n")
+        println("Opciones:")
+        println("1. Ver predicción del clima")
+        println("2. Cambiar Ciudad")
+        println("3. Salir")
+        when(readln().toIntOrNull()) {
+            1 -> {
+                //esto aun no sirve por como funciona la api, a lo mejor lo puedo arreglar despues
+                println("Cuantos días en el futuro?")
+                dias = readln().toString()
+            }
+            2 -> {
+                println("Ingrese Ciudad o Código Postal de US")
+                File(confi).writeText(readln())
+            }
+            3 -> {
+                println("Saliendo")
+                break
+            }
+        }
     }
-    /*mensaje ya tiene el objeto json pero usarlo de un solo sería una terrible idea para mi sanidad mental y para
-    la barbaridad que hay que hacer despues.*/
-
-    /*Como la API no lo da en un formato bonito toca hacer esta barbaridad, honestamente no quise usar for porque no supe como.
-    Basicamente como la API da objetos de JSON Anidados (uno dentro de otro), lo que
-    toca hacer es extraer cada objeto, de ahi el getJSONObject de objeto, que ya era el objeto json base que daba la api.
-    Esto es 0 eficiente, pero funciona hasta que quieres usar el objeto de forecast porque son como 5 objetos anidados en uno,
-    pero mientras no queramos usar las predicciones no importa, es problema para Luis del futuro.*/
-
-    print("\n" +
-            "\n" +
-            " ___  __    ___       ___  _____ ______   ________  ___  __    ________  _________   \n" +
-            "|\\  \\|\\  \\ |\\  \\     |\\  \\|\\   _ \\  _   \\|\\   __  \\|\\  \\|\\  \\ |\\   __  \\|\\___   ___\\ \n" +
-            "\\ \\  \\/  /|\\ \\  \\    \\ \\  \\ \\  \\\\\\__\\ \\  \\ \\  \\|\\  \\ \\  \\/  /|\\ \\  \\|\\  \\|___ \\  \\_| \n" +
-            " \\ \\   ___  \\ \\  \\    \\ \\  \\ \\  \\\\|__| \\  \\ \\   __  \\ \\   ___  \\ \\  \\\\\\  \\   \\ \\  \\  \n" +
-            "  \\ \\  \\\\ \\  \\ \\  \\____\\ \\  \\ \\  \\    \\ \\  \\ \\  \\ \\  \\ \\  \\\\ \\  \\ \\  \\\\\\  \\   \\ \\  \\ \n" +
-            "   \\ \\__\\\\ \\__\\ \\_______\\ \\__\\ \\__\\    \\ \\__\\ \\__\\ \\__\\ \\__\\\\ \\__\\ \\_______\\   \\ \\__\\\n" +
-            "    \\|__| \\|__|\\|_______|\\|__|\\|__|     \\|__|\\|__|\\|__|\\|__| \\|__|\\|_______|    \\|__|\n"+"\n")
-
-    val locacion : JSONObject = objeto.getJSONObject("location")
-    val actual : JSONObject = objeto.getJSONObject("current")
-    //val futuro : JSONObject = objeto.getJSONObject("forecast")
-    println(locacion["country"])
-    println(locacion["name"])
-    println("La temperatura actual es de: "+actual["temp_c"]+"°C")
-    println("La sensación termica es de: "+actual["feelslike_c"]+"°C")
-    println("La información fue actualizada el: "+actual["last_updated"])
-    //println("Información de debug")
-    //println(actual)
-    //println(futuro)
 }
