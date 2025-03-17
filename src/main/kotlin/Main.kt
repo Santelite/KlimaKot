@@ -6,12 +6,16 @@ import org.json.JSONObject
 import java.io.File
 
 fun main() {
+    //definir las variables principales
     val confi = "config.txt"
     val inicial = File(confi)
     var mensaje : Response
     var objeto : JSONObject
     var dias : String = 0.toString()
     var hora : String = 0.toString()
+
+    //chequar si existe la configuración o si esta vacía.
+    //(aunque no exista al ver su longitud en líneas siempre regresa 0)
     if(inicial.length() == 0L) {
         print("\n" +
                 "\n" +
@@ -29,11 +33,11 @@ fun main() {
         println("Guardando...")
         }
 
-    while(true) {
+    while(true){
 
         var postal = inicial.readLines().toString()
 
-        while (true) {
+        while(true) {
             //Hacer pedido a la api
             //debug println(postal)
             mensaje = get(
@@ -42,7 +46,7 @@ fun main() {
                     "key" to "9bcc50a7119f44be93c130505251103",
                     "q" to postal,
                     "lang" to "es",
-                    "days" to dias.toString()
+                    "days" to "14"
                 )
             )
             //debug(debería regresar la como respuesta el codigo 200) println(mensaje)
@@ -57,7 +61,7 @@ fun main() {
                 break
             }
 
-            //si no regreso algo válido entonces mostrar error y seguir bucle hasta que se resuelva
+            //si no regresa algo válido entonces mostrar error y seguir bucle hasta que se resuelva
             print(
                 "\n" +
                         "\n" +
@@ -92,9 +96,7 @@ fun main() {
         )
 
         /*Basicamente como la API da objetos de JSON Anidados (uno dentro de otro), lo que
-        toca hacer es extraer cada objeto, de ahi el getJSONObject de objeto, que ya era el objeto json base que daba la api.
-        Esto funciona hasta que queres usar el objeto de forecast porque son como 5 objetos anidados en uno,
-        pero mientras no queramos usar las predicciones no importa, es problema para Luis del futuro.*/
+        toca hacer es extraer cada objeto, de ahi el getJSONObject de objeto, que ya era el objeto json "base" que da la api.*/
 
         val locacion: JSONObject = objeto.getJSONObject("location")
         val actual: JSONObject = objeto.getJSONObject("current")
@@ -106,9 +108,12 @@ fun main() {
             println("La sensación termica es de: " + actual["feelslike_c"] + "°C")
             println("La información fue actualizada el: " + actual["last_updated"])
 
-        } else if(dias.toIntOrNull() != null && hora.toIntOrNull() != null && dias.toInt() <= 14 && hora.toInt() <= 24) { //si el usuario quiere romper el codigo no lo voy a dejar.
-            //ya es Luis del futuro pero al menos encontre de hacerlo de una forma menos horrible, es lo mismo pero con variables
+        } else if (dias.toIntOrNull() != null && hora.toIntOrNull() != null && dias.toInt() <= 14 && hora.toInt() <= 23) { //evitamos muchos errores con esto
+            //y llego el futuro, al menos encontre de hacerlo de una forma menos horrible, es lo mismo pero con variables
             val x = futuro.getJSONArray("forecastday")
+            //la api tira los días futuros y las horas de esos días no por un objeto si no por un Array.
+            //los Array se acceden no por nombre, si no por indice.
+            //la variable dias se pasa a Int y se le resta 1, porque los Array comienzan por 0, si no, da error fatal.
             val fechafutura = x.getJSONObject(dias.toInt() - 1)
             val climafuturo = fechafutura.getJSONObject("day")
             val todaHora = fechafutura.getJSONArray("hour")
@@ -119,8 +124,9 @@ fun main() {
             println("La temperatura Max será de " + climafuturo["maxtemp_c"] + "°C, y la Min de " + climafuturo["mintemp_c"] + "°C")
             println("La probabilidad de lluvia es de " + climafuturo["daily_chance_of_rain"] + "%")
             println("La temperatura a esa hora será de " + porHora["temp_c"] + "°C")
+            dias = 0.toString()
         } else {
-            println("Hora o día inválido! Vuelve a intentarlo...") //buen intento bro JKAJKJA
+            println("Hora o día inválido! Vuelve a intentarlo...")
         }
         //println("Información de debug")
         //println(actual)
@@ -133,7 +139,6 @@ fun main() {
         println("4. Salir")
         when(readln().toIntOrNull()) {
             1 -> {
-                    //ya sirve ya lo arregle :)
                     println("Cuantos días en el futuro? (Max. 14 Días)")
                     dias = readln().toString()
                     println("En que horas? (24h)")
@@ -157,15 +162,18 @@ fun main() {
                 val objetoalerta = alerta.jsonObject
                 val a = objetoalerta.getJSONObject("alerts")
                 val alertaarray = a.getJSONArray("alert")
+                //las alertas tambien vienen en un Array, pero solo nos interesa la más nueva, así que solo vemos la entrada 0
+                //hay que ver si el array no esta vacío antes de procesarlo, si no dará error fatal.
+                //si esta vacío entonces no se procesa porque significa que no hay alertas en el área.
                 if (!alertaarray.isEmpty) {
-                    val indicealerta = alertaarray.getJSONObject(1)
+                    val indicealerta = alertaarray.getJSONObject(0)
                     println("Alerta más reciente")
                     println("Las alertas se muestran en el Idioma Local.")
-                    println("Tipo" + indicealerta["msgtype"])
-                    println("Severidad" + indicealerta["severity"])
+                    println("Tipo: " + indicealerta["msgtype"])
+                    println("Severidad: " + indicealerta["severity"])
                     println(indicealerta["headline"])
                     println(indicealerta["desc"])
-                    println("Areas afectadas:" + indicealerta["areas"])
+                    println("Areas afectadas: " + indicealerta["areas"])
                     println(indicealerta["effective"])
                     println(indicealerta["expires"])
                     println()
